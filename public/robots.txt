@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://grodno.vibecoding.by/sitemap.xml
+Host: https://grodno.vibecoding.by
