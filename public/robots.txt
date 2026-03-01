@@ -1,5 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /*.json$
+
+User-agent: Yandex
+Allow: /
+Host: https://grodno.vibecoding.by
 
 Sitemap: https://grodno.vibecoding.by/sitemap.xml
 Host: https://grodno.vibecoding.by

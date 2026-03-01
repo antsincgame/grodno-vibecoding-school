@@ -3,7 +3,8 @@ export default function PricingSection() {
     <section className="section" id="pricing">
       <h2 className="section-title">Тарифы на обучение программированию в Гродно</h2>
       <p className="section-subtitle">
-        Прозрачные цены. Cursor Pro и Cursor Ultra предоставляются за наш счёт.
+        Прозрачные цены для учеников от&nbsp;14&nbsp;лет и&nbsp;взрослых.
+        Cursor&nbsp;Pro и Cursor&nbsp;Ultra предоставляются за наш счёт.
         Выбери формат, который подходит именно тебе.
       </p>
 
