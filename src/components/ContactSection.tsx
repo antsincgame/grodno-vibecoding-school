@@ -100,6 +100,23 @@ export default function ContactSection() {
 
       if (error) throw error;
 
+      // Уведомление админу через Amina Bot (fire-and-forget — не блокирует UI)
+      const aminaUrl = import.meta.env.VITE_AMINA_API_URL;
+      if (aminaUrl) {
+        fetch(`${aminaUrl}/api/leads`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: form.name.trim(),
+            phone: form.phone.trim(),
+            email: form.email.trim(),
+            tariff: form.tariff,
+            comment: commentParts.filter(Boolean).join(' | '),
+            source: 'grodno.vibecoding.by',
+          }),
+        }).catch(() => {}); // Молча игнорируем ошибки — основная запись уже в Supabase
+      }
+
       setStatus('success');
       setForm(INITIAL_FORM);
       setPrivacyConsent(false);
