@@ -63,6 +63,24 @@ export default function Footer() {
           </div>
 
           <div>
+            <h4 className="vc-footer-section-title" style={{ color: 'var(--neon-cyan, #00fff9)' }}>
+              Наши порталы
+            </h4>
+            <ul className="vc-footer-links">
+              <li>
+                <a href="https://vibecoding.by" target="_blank" rel="noopener noreferrer" className="vc-footer-link">
+                  🌐 vibecoding.by — Онлайн школа
+                </a>
+              </li>
+              <li>
+                <a href="https://grodno.vibecoding.by" className="vc-footer-link">
+                  🌐 grodno.vibecoding.by — Гродно
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
             <h4 className="vc-footer-section-title" style={{ color: 'var(--neon-pink, #ff006e)' }}>
               Контакты
             </h4>
@@ -128,7 +146,11 @@ export default function Footer() {
 
         <div className="vc-footer-bottom">
           <div className="vc-footer-copyright">
-            <span className="vc-footer-copyright-text">
+            <span
+              onClick={() => { window.location.href = 'https://vibecoding.by/login'; }}
+              className="vc-footer-copyright-text"
+              style={{ cursor: 'pointer' }}
+            >
               &copy; {new Date().getFullYear()} Vibecoding. Все права защищены.
             </span>
             <span>
