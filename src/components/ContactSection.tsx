@@ -86,15 +86,14 @@ export default function ContactSection() {
         commentParts.push(`[Несовершеннолетний] Родитель/представитель: ${form.parentName.trim()}, тел.: ${form.parentPhone.trim()}`);
       }
 
-      const { error } = await supabase.from('grodno_applications').insert([
+      const { error } = await supabase.from('trial_registrations').insert([
         {
-          name: form.name.trim(),
+          parent_name: form.name.trim(),
           phone: form.phone.trim(),
           email: form.email.trim(),
-          tariff: form.tariff,
-          comment: commentParts.filter(Boolean).join(' | '),
-          source: 'grodno.vibecoding.by',
-          created_at: new Date().toISOString(),
+          message: `[🌐 Гродно] Тариф: ${form.tariff}${commentParts.filter(Boolean).join(' | ') ? ' | ' + commentParts.filter(Boolean).join(' | ') : ''}`,
+          status: 'new',
+          age_group: form.isMinor ? 'child' : 'adult',
         },
       ]);
 
