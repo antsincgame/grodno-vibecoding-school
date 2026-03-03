@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { User, AuthError } from '@supabase/supabase-js';
-import { getSupabase, restoreCrossDomainSession } from './supabase';
+import { getSupabase, getAccount, restoreCrossDomainSession } from './supabase';
 
 export interface Profile {
   id: string;
@@ -13,14 +12,14 @@ export interface Profile {
 }
 
 export interface AuthContextType {
-  user: User | null;
+  user: any | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any | null }>;
   sendVerificationEmail: (email: string, fullName: string) => Promise<{ error: Error | null }>;
   verifyEmailAndCreateUser: (token: string, email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
-  signInWithGoogle: () => Promise<{ error: AuthError | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: any | null }>;
+  signInWithGoogle: () => Promise<{ error: any | null }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>;
   sendPasswordResetEmail: (email: string) => Promise<{ error: Error | null }>;
@@ -32,13 +31,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const supabase = getSupabase();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-
     const initAuth = async () => {
       try {
         await restoreCrossDomainSession();
@@ -46,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (mounted) {
           if (data.session?.user) {
             setUser(data.session.user);
-            await loadProfile(data.session.user.id);
+            await loadProfile();
           } else {
             setUser(null);
             setLoading(false);
@@ -56,216 +54,105 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (mounted) setLoading(false);
       }
     };
-
     initAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session: any) => {
       if (!mounted) return;
       (async () => {
         setUser(session?.user ?? null);
         if (session?.user) {
-          await loadProfile(session.user.id);
+          await loadProfile();
         } else {
           setProfile(null);
           setLoading(false);
         }
       })();
     });
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
+    return () => { mounted = false; subscription.unsubscribe(); };
   }, []);
 
-  const loadProfile = async (userId: string, retries = 10) => {
+  const loadProfile = async (retries = 5) => {
     for (let i = 0; i < retries; i++) {
       try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', userId)
-          .maybeSingle();
-
-        if (error) throw error;
-        if (data) {
-          setProfile(data);
-          setLoading(false);
-          return;
-        }
+        const acc = getAccount();
+        const awUser = await acc.get();
+        const { data } = await supabase.from('profiles').select('*').eq('email', awUser.email).maybeSingle();
+        if (data) { setProfile(data); setLoading(false); return; }
         await new Promise(r => setTimeout(r, 500 + i * 200));
-      } catch {
-        await new Promise(r => setTimeout(r, 500));
-      }
+      } catch { await new Promise(r => setTimeout(r, 500)); }
     }
-
+    // Auto-create profile if none exists
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.access_token) {
-        const url = import.meta.env.VITE_SUPABASE_URL;
-        const res = await fetch(`${url}/functions/v1/ensure-profile`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`,
-          },
-        });
-        if (res.ok) {
-          const { data } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .maybeSingle();
-          if (data) {
-            setProfile(data);
-            setLoading(false);
-            return;
-          }
-        }
-      }
-    } catch {
-      // fall through to setProfile(null)
-    }
-
+      const acc = getAccount();
+      const awUser = await acc.get();
+      const { data } = await supabase.from('profiles').insert({
+        email: awUser.email,
+        full_name: awUser.name || awUser.email.split('@')[0],
+        role: 'student',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+      if (data) { setProfile(data); setLoading(false); return; }
+    } catch { /* fall through */ }
     setProfile(null);
     setLoading(false);
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: fullName },
-          emailRedirectTo: `${window.location.origin}/student/confirm`,
-        },
-      });
-      return { error };
-    } catch (error) {
-      return { error: error as AuthError };
-    }
+    const { error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } });
+    return { error };
   };
 
-  const sendVerificationEmail = async (email: string, fullName: string) => {
+  const sendVerificationEmail = async (_email: string, _fullName: string) => {
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${supabaseUrl}/functions/v1/send-verification-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ email, fullName, siteUrl: window.location.origin }),
-      });
-      const data = await res.json();
-      if (!res.ok) return { error: new Error(data.error || 'Failed') };
+      const acc = getAccount();
+      await acc.createVerification(window.location.origin + '/student/confirm');
       return { error: null };
-    } catch (error) {
-      return { error: error as Error };
-    }
+    } catch (error) { return { error: error as Error }; }
   };
 
-  const verifyEmailAndCreateUser = async (token: string, email: string, password: string, fullName: string) => {
+  const verifyEmailAndCreateUser = async (token: string, _email: string, _password: string, _fullName: string) => {
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${supabaseUrl}/functions/v1/verify-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ token, email, password, fullName }),
-      });
-      const data = await res.json();
-      if (!res.ok) return { error: new Error(data.error || 'Verification failed') };
+      const acc = getAccount();
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('userId') || '';
+      const secret = urlParams.get('secret') || token;
+      await acc.updateVerification(userId, secret);
       return { error: null };
-    } catch (error) {
-      return { error: error as Error };
-    }
+    } catch (error) { return { error: error as Error }; }
   };
 
   const sendPasswordResetEmail = async (email: string) => {
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${supabaseUrl}/functions/v1/send-password-reset`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ email, siteUrl: window.location.origin }),
-      });
-      const data = await res.json();
-      if (!res.ok) return { error: new Error(data.error || 'Failed') };
+      const acc = getAccount();
+      await acc.createRecovery(email, window.location.origin + '/student/reset-password');
       return { error: null };
-    } catch (error) {
-      return { error: error as Error };
-    }
+    } catch (error) { return { error: error as Error }; }
   };
 
-  const verifyResetToken = async (token: string, email: string) => {
-    try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${supabaseUrl}/functions/v1/verify-reset-token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ token, email }),
-      });
-      const data = await res.json();
-      if (!data.valid) return { valid: false, error: data.error, message: data.message };
-      return { valid: true, error: null, message: null };
-    } catch {
-      return { valid: false, error: 'network_error', message: 'Network error' };
-    }
-  };
+  const verifyResetToken = async () => ({ valid: true, error: null, message: null });
 
-  const resetPassword = async (token: string, email: string, newPassword: string) => {
+  const resetPassword = async (_token: string, _email: string, newPassword: string) => {
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${supabaseUrl}/functions/v1/reset-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ token, email, newPassword }),
-      });
-      const data = await res.json();
-      if (!res.ok) return { error: new Error(data.error || 'Reset failed') };
+      const acc = getAccount();
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('userId') || '';
+      const secret = urlParams.get('secret') || _token;
+      await acc.updateRecovery(userId, secret, newPassword);
       return { error: null };
-    } catch (error) {
-      return { error: error as Error };
-    }
+    } catch (error) { return { error: error as Error }; }
   };
 
   const signIn = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      return { error };
-    } catch (error) {
-      return { error: error as AuthError };
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error };
   };
 
   const signInWithGoogle = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          queryParams: { access_type: 'offline', prompt: 'select_account' },
-        },
-      });
-      if (error) return { error };
-      if (data?.url) window.location.href = data.url;
-      return { error };
-    } catch (error) {
-      return { error: error as AuthError };
-    }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/auth/callback' },
+    });
+    return { error };
   };
 
   const signOut = async () => {
@@ -277,24 +164,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) return { error: new Error('No user') };
     try {
-      const { error } = await supabase.from('profiles').update(updates).eq('id', user.id);
-      if (error) throw error;
-      await loadProfile(user.id);
+      const acc = getAccount();
+      const awUser = await acc.get();
+      const { data: existing } = await supabase.from('profiles').select('*').eq('email', awUser.email).maybeSingle();
+      if (existing) {
+        const { error } = await supabase.from('profiles').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', existing.id);
+        if (error) throw error;
+        await loadProfile();
+      }
       return { error: null };
-    } catch (error) {
-      return { error: error as Error };
-    }
+    } catch (error) { return { error: error as Error }; }
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user, profile, loading,
-        signUp, sendVerificationEmail, verifyEmailAndCreateUser,
-        signIn, signInWithGoogle, signOut, updateProfile,
-        sendPasswordResetEmail, verifyResetToken, resetPassword,
-      }}
-    >
+    <AuthContext.Provider value={{
+      user, profile, loading, signUp, sendVerificationEmail, verifyEmailAndCreateUser,
+      signIn, signInWithGoogle, signOut, updateProfile, sendPasswordResetEmail, verifyResetToken, resetPassword,
+    }}>
       {children}
     </AuthContext.Provider>
   );
@@ -303,7 +189,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (!context) {
-    // Return safe defaults when no AuthProvider (e.g. freelance uses own auth)
     const noop = async () => ({ error: null }) as any;
     return {
       user: null, profile: null, loading: false,
