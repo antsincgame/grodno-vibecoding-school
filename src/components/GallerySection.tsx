@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from 'react';
 
 const PHOTOS = Array.from({ length: 9 }, (_, i) => ({
   src: `/images/lab/lab-${String(i + 1).padStart(2, '0')}.jpg`,
-  alt: `AI-лаборатория VibeCoding в Гродно — фото ${i + 1}`,
+  alt: `Школа программирования VibeCoding в Гродно — фото ${i + 1}`,
 }));
 
 export default function GallerySection() {
@@ -51,7 +51,7 @@ export default function GallerySection() {
 
   return (
     <section className="section" id="gallery">
-      <h2 className="section-title">Наша офлайн лаборатория в Гродно</h2>
+      <h2 className="section-title">Учебный класс — курсы программирования в&nbsp;Гродно</h2>
       <p className="section-subtitle">
         Реальное пространство для обучения AI-программированию — профессиональное оборудование,
         комфортные рабочие места, атмосфера для продуктивной работы

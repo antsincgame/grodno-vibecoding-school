@@ -1,7 +1,7 @@
 export default function MethodSection() {
   return (
     <section className="section" id="method" aria-label="Метод обучения ИИ программированию">
-      <h2 className="section-title">Вайбкодинг — обучение ИИ программированию нового поколения</h2>
+      <h2 className="section-title">Вайбкодинг — метод обучения на&nbsp;курсах программирования в&nbsp;Гродно</h2>
       <p className="section-subtitle">
         Революционный метод создания приложений с&nbsp;помощью ИИ.
         Школа VibeCoding в&nbsp;Гродно обучает этому подходу офлайн — с&nbsp;живым наставником.
@@ -52,7 +52,7 @@ export default function MethodSection() {
           margin: '40px auto 0',
         }}
       >
-        Школа ИИ программирования VibeCoding в&nbsp;Гродно — единственная офлайн AI-лаборатория
+        VibeCoding — единственные офлайн курсы программирования с&nbsp;ИИ
         в&nbsp;Гродненской области. Приходите учиться в&nbsp;реальное пространство,
         оснащённое профессиональным оборудованием.
       </p>

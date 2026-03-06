@@ -128,7 +128,7 @@ export default function ContactSection() {
 
   return (
     <section className="section" id="contact">
-      <h2 className="section-title">Как записаться на курсы программирования</h2>
+      <h2 className="section-title">Записаться на курсы программирования в&nbsp;Гродно</h2>
       <p className="section-subtitle">
         Оставьте заявку или свяжитесь с нами напрямую — мы ответим в&nbsp;течение 24&nbsp;часов.
         Принимаем учеников от&nbsp;14&nbsp;лет (с&nbsp;согласия родителей) и&nbsp;взрослых.
@@ -198,7 +198,7 @@ export default function ContactSection() {
                   onChange={handleChange}
                 >
                   <option value="single">Разовое занятие (200 BYN)</option>
-                  <option value="course">Базовый курс — 5 занятий (1 000 BYN)</option>
+                  <option value="course">Базовый курс — 6 занятий (1 000 BYN)</option>
                   <option value="vibe-master-pro">VibeMaster PRO — личное наставничество (3 000 BYN)</option>
                 </select>
               </div>
@@ -318,7 +318,7 @@ export default function ContactSection() {
           <div className="contact-info-item">
             <span className="contact-info-icon">📍</span>
             <a
-              href="https://share.google/EDgmh1hNpyObSvgIc"
+              href="https://maps.app.goo.gl/MkoFGc52hxSJdZon9"
               target="_blank"
               rel="noopener noreferrer"
               className="contact-info-link"
@@ -367,8 +367,8 @@ export default function ContactSection() {
 
           <div className="contact-map">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2376.5!2d23.8258!3d53.6884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTPCsDQxJzE4LjIiTiAyM8KwNDknMzMuMCJF!5e0!3m2!1sru!2sby!4v1"
-              title="AI-лаборатория VibeCoding на карте Гродно"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1188.3!2d23.8258!3d53.6884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46dfd63684b09cc5%3A0x5f2a7e3bb4d0c4e0!2z0YPQuy4g0JrRgNCw0YHQvdC-0L_QsNGA0YLQuNC30LDQvdGB0LrQsNGPIDU1LTIsINCT0YDQvtC00L3Qvg!5e0!3m2!1sru!2sby!4v1"
+              title="Школа программирования VibeCoding на карте Гродно"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />

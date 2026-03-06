@@ -1,7 +1,7 @@
 export default function PricingSection() {
   return (
     <section className="section" id="pricing">
-      <h2 className="section-title">Тарифы на обучение программированию в Гродно</h2>
+      <h2 className="section-title">Тарифы — курсы программирования в&nbsp;Гродно</h2>
       <p className="section-subtitle">
         Прозрачные цены для учеников от&nbsp;14&nbsp;лет и&nbsp;взрослых.
         Cursor&nbsp;Pro и Cursor&nbsp;Ultra предоставляются за наш счёт.
@@ -48,20 +48,20 @@ export default function PricingSection() {
         <div className="cyber-card pricing-card featured">
           <div className="pricing-badge">Лучший выбор</div>
           <h3 className="pricing-name">Базовый курс</h3>
-          <p className="pricing-desc">5 занятий по 2 часа</p>
+          <p className="pricing-desc">6 занятий по 2 часа</p>
           <div className="pricing-price">1000</div>
           <div className="pricing-currency">BYN</div>
 
           <div className="pricing-bonus">🎁 Cursor Pro бесплатно на время обучения</div>
 
           <ul className="pricing-features">
-            <li>10 часов практики с наставником</li>
+            <li>12 часов практики с наставником</li>
             <li>Реальный проект в портфолио</li>
             <li>Cursor Pro — предоставляем мы</li>
             <li>Все учебные материалы</li>
             <li>Поддержка между занятиями</li>
             <li>Сертификат по окончании</li>
-            <li>Малая группа до 6 человек</li>
+            <li>Мини-группа до 4 человек</li>
           </ul>
 
           <a href="#contact" className="cyber-button" style={{ width: '100%' }}>
@@ -107,7 +107,7 @@ export default function PricingSection() {
           </div>
 
           <ul className="pricing-features">
-            <li>Безлимитный доступ в AI-лабораторию Гродно 24/7</li>
+            <li>Безлимитный доступ в учебный класс Гродно 24/7</li>
             <li>Прямой контакт с Дмитрием Орловым онлайн и офлайн</li>
             <li>Cursor Ultra — предоставляем мы</li>
             <li>Индивидуальная программа под ваши цели</li>

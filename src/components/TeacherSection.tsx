@@ -3,7 +3,7 @@
 export default function TeacherSection() {
   return (
     <section className="section" id="teacher">
-      <h2 className="section-title">Дмитрий Орлов — ваш наставник в мире AI</h2>
+      <h2 className="section-title">Наставник курсов программирования в&nbsp;Гродно</h2>
       <p className="section-subtitle">
         Основатель VibeCoding, практикующий разработчик с 15+ лет опыта в IT-индустрии
       </p>
@@ -12,7 +12,7 @@ export default function TeacherSection() {
         <div className="teacher-photo-wrapper">
           <img
             src="/images/lab/lab-01.jpg"
-            alt="Дмитрий Орлов — преподаватель AI-лаборатории VibeCoding в Гродно"
+            alt="Дмитрий Орлов — наставник школы программирования VibeCoding в Гродно"
             width={300}
             className="teacher-photo"
             style={{ objectFit: 'cover' }}
@@ -42,13 +42,13 @@ export default function TeacherSection() {
               VibeCoding
             </a>
             , через которую уже прошли десятки учеников. Теперь VibeCoding пришёл в Гродно
-            в формате живой AI-лаборатории.
+            в формате живой офлайн-школы.
           </p>
 
           <p className="teacher-bio">
-            На занятиях в AI-лаборатории Гродно Дмитрий лично ведёт каждый урок,
+            На курсах программирования в Гродно Дмитрий лично ведёт каждый урок,
             помогает с проектами и делится реальным опытом коммерческой разработки.
-            Индивидуальный подход, малые группы, живое общение — всё для максимального результата.
+            Индивидуальный подход, мини-группы до 4 человек, живое общение — как персональное репетиторство, но в команде.
           </p>
 
           <a

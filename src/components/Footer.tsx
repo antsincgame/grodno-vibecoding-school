@@ -38,7 +38,7 @@ export default function Footer() {
           <div className="vc-footer-brand">
             <h3 className="vc-footer-brand-name">VibeCoding Гродно</h3>
             <p className="vc-footer-brand-desc">
-              AI-лаборатория программирования с искусственным интеллектом в Гродно.
+              Курсы программирования с искусственным интеллектом в Гродно.
               Офлайн-обучение вайбкодингу и веб-разработке.
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function Footer() {
               <div className="vc-footer-contact-row">
                 <span>📍</span>
                 <a
-                  href="https://share.google/EDgmh1hNpyObSvgIc"
+                  href="https://maps.app.goo.gl/MkoFGc52hxSJdZon9"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="vc-footer-link"

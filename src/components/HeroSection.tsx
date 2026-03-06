@@ -2,7 +2,7 @@ export default function HeroSection() {
   return (
     <section className="hero" id="hero" aria-label="Школа ИИ программирования VibeCoding в Гродно">
       <div className="hero-content">
-        <div className="hero-badge">Офлайн AI-лаборатория · Гродно</div>
+        <div className="hero-badge">Офлайн курсы программирования · Гродно</div>
         <h1 className="glitch">
           Школа ИИ&nbsp;программирования в&nbsp;Гродно
         </h1>
